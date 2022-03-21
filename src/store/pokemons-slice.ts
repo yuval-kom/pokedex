@@ -10,6 +10,8 @@ const PokemonSlice = createSlice({
     nextOffset: 0,
     prevOffset: null,
     currOffset: 0,
+    isInSearchMode: false,
+    searchedPokemons: [],
   },
   reducers: {
     setPokemons(state, actions) {
@@ -29,6 +31,12 @@ const PokemonSlice = createSlice({
     setPokemon(state, actions) {
       state.pokemons = actions.payload.pokemonData;
       console.log(actions.payload.pokemonData);
+    },
+    setSearchMode(state, actions) {
+      state.isInSearchMode = actions.payload.isInSearchMode;
+    },
+    setSearchedPokemons(state, actions) {
+      state.searchedPokemons = actions.payload.searchedPokemons;
     },
   },
 });

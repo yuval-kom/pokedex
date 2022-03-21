@@ -40,20 +40,17 @@ const StyleControl = styled.div`
 let isInitialSet = false;
 const AllPokemons = () => {
   const dispatch = useDispatch();
-  const [isInSearchMode, setIsInSearchMode] = useState(false);
-  const [searchedPokemons, setSearchedPokemons] = useState<PokemonT[]>();
+  //const [isInSearchMode, setIsInSearchMode] = useState(false);
+  //const [searchedPokemons, setSearchedPokemons] = useState<PokemonT[]>();
   const searchInput = useRef<HTMLInputElement>(null);
   const allPokemons = useSelector((state: RootStateOrAny) => state.pokemons.pokemons);
-  const nextOffset = useSelector((state: RootStateOrAny) => state.pokemons.nextOffset);
-  const prevOffset = useSelector((state: RootStateOrAny) => state.pokemons.prevOffset);
-  const currOffset = useSelector((state: RootStateOrAny) => state.pokemons.currOffset);
+  const { nextOffset, prevOffset, currOffset, isInSearchMode, searchedPokemons } = useSelector((state: RootStateOrAny) => state.pokemons);
+  //const prevOffset = useSelector((state: RootStateOrAny) => state.pokemons.prevOffset);
+  //const currOffset = useSelector((state: RootStateOrAny) => state.pokemons.currOffset);
 
   useEffect(() => {
-
     getPokemons(currOffset).then(res => dispatch(PokemonsActions.setPokemons(res))).catch(err => console.log(err));
     isInitialSet = true;
-
-
   }, [dispatch]);
 
   const nextPokemonsBatch = () => {
@@ -71,26 +68,33 @@ const AllPokemons = () => {
     e.preventDefault();
     const enteredPokemon = searchInput.current!.value;
     getPokemon(enteredPokemon).then(res => dispatch(PokemonsActions.setPokemon({ pokemonData: [res] }))).catch(err => console.log(err));
-    setIsInSearchMode(true);
+    dispatch(PokemonsActions.setSearchMode({ isInSearchMode: true }));
+    //setIsInSearchMode(true);
   }
 
   const setAllPokemons = () => {
     getPokemons(currOffset).then(res => dispatch(PokemonsActions.setPokemons(res))).catch(err => console.log(err));
-    setIsInSearchMode(false);
+    //setIsInSearchMode(false);
   }
   const onChangeSearchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === "") {
+      dispatch(PokemonsActions.setSearchMode({ isInSearchMode: false }));
+      //setIsInSearchMode(false);
+      return;
+    }
     const searchedPokemons: PokemonT[] = JSON.parse(localStorage.getItem("pokemons")!);
 
     let searchedPokemonArr: PokemonT[] = [];
     searchedPokemons.forEach(pokemon => {
       if (pokemon.name.toLowerCase().startsWith(e.target.value.toLowerCase())) {
-        console.log("innnn");
         searchedPokemonArr.push(pokemon);
       }
     });
 
-    setSearchedPokemons(searchedPokemonArr);
-    setIsInSearchMode(true);
+    //setSearchedPokemons(searchedPokemonArr);
+    dispatch(PokemonsActions.setSearchMode({ isInSearchMode: true }));
+    dispatch(PokemonsActions.setSearchedPokemons({ searchedPokemons: searchedPokemonArr }));
+    //setIsInSearchMode(true);
   }
 
   return <>

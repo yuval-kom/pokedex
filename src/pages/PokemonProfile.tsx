@@ -52,7 +52,9 @@ const StyleControl = styled.div`
 const PokemonProfile: React.FC<{}> = (props) => {
     const { pokemonName } = useParams();
     const allPokemons: PokemonT[] = useSelector((state: RootStateOrAny) => state.pokemons.pokemons);
-    const currPokemon = allPokemons.find((p: PokemonT) => p.name === pokemonName);
+    const { searchedPokemons, isInSearchMode } = useSelector((state: RootStateOrAny) => state.pokemons);
+    const currPokemon = (!isInSearchMode ? allPokemons : searchedPokemons).find((p: PokemonT) => p.name === pokemonName);
+
     const navigateTo = useNavigate();
 
     const onClickBack = () => {
